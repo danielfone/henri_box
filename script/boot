@@ -1,6 +1,7 @@
 #!/bin/sh
 
 function start(){
+    source .env
     postgres -D /usr/local/var/postgres/ &
     bundle exec rails server
 }
