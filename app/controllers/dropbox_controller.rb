@@ -24,10 +24,17 @@ class DropboxController < ApplicationController
     redirect_to home_path
   end
 
+  def info
+    dbsession = DropboxSession.deserialize(session[:dropbox_session])
+    client = DropboxClient.new(dbsession, :app_folder) #raise an exception if session not authorized
+    render text: client.account_info
+  rescue 
+  end
+
   private
 
     def home_path
-      raise 'No homepage yet'
+      url_for action: 'info'
     end
 
     def dropbox_config
