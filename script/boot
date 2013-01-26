@@ -1,0 +1,13 @@
+#!/bin/sh
+
+function start(){
+    postgres -D /usr/local/var/postgres/ &
+    bundle exec rails server
+}
+
+function stop(){
+    : #kill SIGINT $dbpid
+}
+
+trap stop SIGHUP SIGINT SIGTERM
+start
