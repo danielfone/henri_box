@@ -43,7 +43,23 @@ describe 'Login' do
     end
   end
 
-  context 'when the visitor is already logged in'
+  context 'when the visitor is already logged in' do
+    before do
+      stub_response = { body: "oauth_token_secret=#{oauth_token_secret}&oauth_token=#{oauth_token}" }
+      stub_request(:get, "https://api.dropbox.com/1/oauth/request_token").to_return stub_response
+      stub_request(:get, "https://api.dropbox.com/1/oauth/access_token").to_return stub_response
+      info_response = { body: %Q[{"uid": #{uid}}] }
+      stub_request(:get, "https://api.dropbox.com/1/account/info").to_return info_response
+    end
+    before { login }
+    before { get_via_redirect "/dropbox/callback?uid=#{uid}&oauth_token=#{oauth_token}" }
+    before { login }
+
+    it 'should not reauthenticated' do
+      expect(a_request :get, "https://api.dropbox.com/1/oauth/request_token").to have_been_made.once
+      expect(a_request :get, "https://api.dropbox.com/1/oauth/access_token").to have_been_made.once
+    end
+  end
 
   context 'when a new visitor authorises the app' do
     before do
@@ -54,13 +70,30 @@ describe 'Login' do
       stub_request(:get, "https://api.dropbox.com/1/account/info").to_return info_response
     end
     before { login }
-    before { get "/dropbox/callback?uid=#{uid}&oauth_token=#{oauth_token}"; follow_redirect! }
+    before { get_via_redirect "/dropbox/callback?uid=#{uid}&oauth_token=#{oauth_token}" }
 
     it 'should render some info' do
       expect(response.body).to include "uid: #{uid}"
     end
   end
+
+  context 'when the visitor denies the app' do
+    before do
+      stub_response = { body: "oauth_token_secret=#{oauth_token_secret}&oauth_token=#{oauth_token}" }
+      stub_request(:get, "https://api.dropbox.com/1/oauth/request_token").to_return stub_response
+      stub_request(:get, "https://api.dropbox.com/1/oauth/access_token").to_return(
+        body: '{"error": "Token is disabled or invalid"}',
+        status: 401,
+      )
+    end
+    before { login }
+    before { get "/dropbox/callback?not_approved=true" }
+
+    it 'should render a polite failure' do
+      expect(response.body).to include "Sorry, we couldn't connect to your Dropbox account."
+    end
+  end
+
   context 'when a returning user authorises the app'
-  context 'when the visitor denies the app'
 
 end

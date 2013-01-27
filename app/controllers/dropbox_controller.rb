@@ -1,7 +1,11 @@
 class DropboxController < ApplicationController
 
   def login
-    send_to_dropbox
+    if dropbox_session && dropbox_session.authorized?
+      redirect_to action: :info
+    else
+      send_to_dropbox
+    end
   end
 
   def send_to_dropbox
@@ -13,15 +17,15 @@ class DropboxController < ApplicationController
   end
 
   def callback
-    dropbox_session = DropboxSession.deserialize session[:dropbox_session]
     dropbox_session.get_access_token
     session[:dropbox_session] = dropbox_session.serialize
 
     redirect_to home_path
+  rescue DropboxAuthError
+    render text: "Sorry, we couldn't connect to your Dropbox account."
   end
 
   def info
-    dropbox_session = DropboxSession.deserialize session[:dropbox_session]
     client = DropboxClient.new(dropbox_session, :app_folder) #raise an exception if session not authorized
     render text: client.account_info.to_yaml, content_type: Mime::TEXT
   rescue DropboxAuthError
@@ -29,6 +33,10 @@ class DropboxController < ApplicationController
   end
 
   private
+
+    def dropbox_session
+      @dropbox_session ||= DropboxSession.deserialize session[:dropbox_session] if session[:dropbox_session]
+    end
 
     def home_path
       url_for action: 'info'
