@@ -34,4 +34,7 @@ HenriBox::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  # Verbose logging of external HTTP requests
+  Net::HTTP.log_headers = true
 end
