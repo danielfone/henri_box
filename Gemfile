@@ -5,6 +5,7 @@ gem 'rails', '3.2.11'
 gem 'pg'
 gem 'thin'
 gem 'dropbox-sdk'
+gem 'jquery-rails'
 
 gem 'rspec-rails', groups: [:test, :development]
 
@@ -14,4 +15,6 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails'
+group :test do
+  gem 'capybara'
+end
