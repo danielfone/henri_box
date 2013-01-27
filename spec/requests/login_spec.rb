@@ -72,7 +72,7 @@ describe 'Login' do
   end
 
   def login
-    get '/login'
+    get '/dropbox/login'
   end
 
   def login_and_expect_error

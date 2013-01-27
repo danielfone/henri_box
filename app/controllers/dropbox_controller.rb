@@ -8,42 +8,50 @@ class DropboxController < ApplicationController
     end
   end
 
-  def send_to_dropbox
-    dropbox_session = DropboxSession.new dropbox_config[:app_key], dropbox_config[:app_secret]
-    session[:dropbox_session] = dropbox_session.serialize
-    redirect_to dropbox_session.get_authorize_url url_for action: 'callback'
-  rescue Timeout::Error, DropboxAuthError
-    render text: "Unfortunately, we can't connect to Dropbox right now"
-  end
-
   def callback
     dropbox_session.get_access_token
-    session[:dropbox_session] = dropbox_session.serialize
-
-    redirect_to home_path
+    save_dropbox_session
+    redirect_to action: 'info'
   rescue DropboxAuthError
     render text: "Sorry, we couldn't connect to your Dropbox account."
   end
 
   def info
-    client = DropboxClient.new(dropbox_session, :app_folder) #raise an exception if session not authorized
-    render text: client.account_info.to_yaml, content_type: Mime::TEXT
+    render text: dropbox_client.account_info.to_yaml
   rescue DropboxAuthError
-    render text: 'Not authenticated', content_type: Mime::TEXT
+    render text: 'Not authenticated'
   end
 
   private
 
     def dropbox_session
-      @dropbox_session ||= DropboxSession.deserialize session[:dropbox_session] if session[:dropbox_session]
+      @dropbox_session ||= if session[:dropbox_session]
+        DropboxSession.deserialize(session[:dropbox_session])
+      end
     end
 
-    def home_path
-      url_for action: 'info'
+    def dropbox_client
+      @dropbox_client ||= DropboxClient.new(dropbox_session, :app_folder)
     end
 
     def dropbox_config
       Rails.application.config.dropbox
+    end
+
+    def send_to_dropbox
+      setup_session
+      save_dropbox_session
+      redirect_to dropbox_session.get_authorize_url url_for action: 'callback'
+    rescue Timeout::Error, DropboxAuthError
+      render text: "Unfortunately, we can't connect to Dropbox right now"
+    end
+
+    def setup_session
+      @dropbox_session = DropboxSession.new dropbox_config[:app_key], dropbox_config[:app_secret]
+    end
+
+    def save_dropbox_session
+      session[:dropbox_session] = dropbox_session.serialize
     end
 
 end
