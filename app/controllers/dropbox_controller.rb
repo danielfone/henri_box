@@ -27,8 +27,7 @@ class DropboxController < ApplicationController
   def info
     dbsession = DropboxSession.deserialize(session[:dropbox_session])
     client = DropboxClient.new(dbsession, :app_folder) #raise an exception if session not authorized
-    render text: client.account_info
-  rescue 
+    render text: client.account_info.to_yaml, content_type: Mime::TEXT
   end
 
   private
