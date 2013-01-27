@@ -4,4 +4,6 @@ HenriBox::Application.routes.draw do
     match 'callback'
     match 'info'
   end
+
+  root to: 'application#home'
 end
