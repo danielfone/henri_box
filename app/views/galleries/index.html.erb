@@ -1,0 +1,7 @@
+<%- if @galleries.any? -%>
+  <%- @galleries.each do |gallery| -%>
+    <%= link_to gallery["path"], gallery_photos_path(gallery["path"]) %>
+  <%- end -%>
+<%- else -%>
+  <p>No galleries found. Instructional video required.</p>
+<%- end -%>
