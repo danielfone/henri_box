@@ -2,7 +2,7 @@ HenriBox::Application.routes.draw do
   namespace 'dropbox' do
     match 'login'
     match 'callback'
-    match 'info'
+    match 'sign_out'
   end
 
   root to: 'application#home'
