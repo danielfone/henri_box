@@ -5,10 +5,10 @@ describe 'Login' do
   let(:oauth_callback)     { 'http://www.example.com/dropbox/callback' }
   let(:oauth_token)        { 'oauth_token' }
   let(:oauth_token_secret) { 'oauth_token_secret' }
-  let(:uid)                { '1234' }
+  let(:user_name)          { 'Test User' }
 
   let(:oauth_response) { { body: "oauth_token_secret=#{oauth_token_secret}&oauth_token=#{oauth_token}" } }
-  let(:info_response)  { { body: %Q({"uid": #{uid}}) } }
+  let(:info_response)  { { body: %Q({"display_name": "#{user_name}"}) } }
   let(:authorize_url)  { "https://www.dropbox.com/1/oauth/authorize?oauth_token=#{oauth_token}&oauth_callback=#{oauth_callback}" }
 
   before do
@@ -51,9 +51,9 @@ describe 'Login' do
   end
 
   context 'when a new visitor authorises the app' do
-    it 'should render some info' do
+    it 'should log them in' do
       login_and_authorize
-      expect(response.body).to include "uid: #{uid}"
+      expect(response.body).to include "Welcome, #{user_name}"
     end
   end
 
@@ -62,8 +62,8 @@ describe 'Login' do
 
     it 'should render a polite failure' do
       login
-      get "/dropbox/callback?not_approved=true"
-      expect(response.body).to include "Sorry, we couldn't connect to your Dropbox account."
+      get_via_redirect "/dropbox/callback?not_approved=true"
+      expect(CGI.unescapeHTML response.body).to include "Sorry, we couldn't connect to your Dropbox account."
     end
   end
 
@@ -77,12 +77,13 @@ describe 'Login' do
 
   def login_and_expect_error
     login
-    expect(response.body).to include "Unfortunately, we can't connect to Dropbox right now"
+    follow_redirect!
+    expect(CGI.unescapeHTML response.body).to include "Sorry, we can't connect to Dropbox right now"
   end
 
   def login_and_authorize
     login
-    get_via_redirect "/dropbox/callback?uid=#{uid}&oauth_token=#{oauth_token}"
+    get_via_redirect "/dropbox/callback?uid=1234&oauth_token=#{oauth_token}"
   end
 
 end
