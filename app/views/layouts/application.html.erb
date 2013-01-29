@@ -9,8 +9,8 @@
 <body>
 
 <div class="auth">
-  <%- if logged_in? -%>
-    <p>Welcome, <%= username %>. <%= link_to 'Sign Out', dropbox_sign_out_path %></p>
+  <%- if current_user -%>
+    <p>Welcome, <%= current_user.name %>. <%= link_to 'Sign Out', dropbox_sign_out_path %></p>
   <%- else -%>
     <%= link_to 'Sign in with Dropbox', dropbox_login_path, class: 'db-button login' %>
   <%- end -%>

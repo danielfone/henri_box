@@ -1,4 +1,4 @@
-<%= link_to 'Your Galleries', galleries_path if logged_in? %>
+<%= link_to 'Your Galleries', galleries_path if current_user %>
 <p>
   <%= image_tag 'bike.jpg', width: '100%' %>
 </p>

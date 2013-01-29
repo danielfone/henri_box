@@ -1,6 +1,9 @@
+<h2>Galleries</h2>
+
 <%- if @galleries.any? -%>
   <%- @galleries.each do |gallery| -%>
-    <%= link_to gallery["path"], gallery_photos_path(gallery["path"]) %>
+    <%= link_to gallery.name, gallery_photos_path(gallery) %> —
+    modified <%= time_ago_in_words gallery.updated_at %> ago
   <%- end -%>
 <%- else -%>
   <p>No galleries found. Instructional video required.</p>

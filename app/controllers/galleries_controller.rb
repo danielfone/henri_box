@@ -1,7 +1,7 @@
 class GalleriesController < ApplicationController
 
   def index
-    @galleries = dropbox_client.metadata('/')['contents']
+    @galleries = current_user.galleries
   end
 
 end
