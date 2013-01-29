@@ -17,7 +17,7 @@ private
   end
 
   def username
-    @username ||= account_info['display_name'] if account_info
+    cache_for_session("username") { account_info['display_name'] if account_info } 
   end
 
   def account_info
@@ -26,6 +26,12 @@ private
 
   def dropbox_client
     @dropbox_client ||= DropboxClient.new(dropbox_session, :app_folder) if dropbox_session
+  end
+
+  def cache_for_session(key, &block)
+    session_key = dropbox_session.access_token.secret
+    full_key = "#{session_key}/#{key}"
+    Rails.cache.fetch full_key, &block
   end
 
 end
