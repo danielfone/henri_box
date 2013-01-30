@@ -75,6 +75,7 @@ img {
 #flash_notice, #flash_error, #flash_alert {
   padding: 5px 8px;
   margin: 10px auto;
+  color: black;
 }
 
 #flash_notice {
