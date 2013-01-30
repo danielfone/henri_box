@@ -1,8 +1,12 @@
-<%= link_to '&larr; Galleries'.html_safe, galleries_path %>
+<h2>
+  <%= link_to 'Galleries', galleries_path %>
+  &rarr;
+  <%= @gallery.name %>
+</h2>
 
 <%- if @photos.any? -%>
   <%- @photos.each do |photo| -%>
-    <p><%= image_tag photo['url'] %></p>
+    <p><%= link_to thumbnail_tag(photo), photo.url %></p>
   <%- end -%>
 <%- else -%>
   <p>No photos found. Instructional video required.</p>

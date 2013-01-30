@@ -1,10 +1,13 @@
 class PhotosController < ApplicationController
 
   def index
-    @photos = dropbox_client.metadata(params[:gallery_id])['contents']
-    @photos.each do |photo|
-      photo['url'] = dropbox_client.media(photo['path'])['url']
-    end
+    @photos = gallery.photos
   end
+
+  private
+
+    def gallery
+      @gallery ||= current_user.find_gallery params[:gallery_id]
+    end
 
 end

@@ -5,8 +5,10 @@ HenriBox::Application.routes.draw do
     match 'sign_out'
   end
 
-  resources :galleries do
-    resources :photos
+  resources :galleries, only: :index do
+    resources :photos, only: :index do
+      resource :thumbnail, only: :show
+    end
   end
 
   root to: 'application#home'
