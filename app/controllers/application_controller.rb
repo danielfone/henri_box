@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user
 
+  around_filter :rescue_connection_errors
+
 private
 
   def logged_in?
@@ -17,6 +19,12 @@ private
 
   def current_user
     @current_user = User.new dropbox_session if logged_in?
+  end
+
+  def rescue_connection_errors
+    yield
+  rescue Timeout::Error, DropboxAuthError, SocketError
+    redirect_to root_path, alert: "Sorry, we can't connect to Dropbox right now."
   end
 
 end

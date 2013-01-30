@@ -1,5 +1,5 @@
 HenriBox::Application.routes.draw do
-  namespace 'dropbox' do
+  namespace 'auth' do
     match 'login'
     match 'callback'
     match 'sign_out'

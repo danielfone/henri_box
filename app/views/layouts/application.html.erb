@@ -10,9 +10,9 @@
 
 <div class="auth">
   <%- if current_user -%>
-    <p>Welcome, <%= current_user.name %>. <%= link_to 'Sign Out', dropbox_sign_out_path %></p>
+    <p>Welcome, <%= current_user.name %>. <%= link_to 'Sign Out', auth_sign_out_path %></p>
   <%- else -%>
-    <%= link_to 'Sign in with Dropbox', dropbox_login_path, class: 'db-button login' %>
+    <%= link_to 'Sign in with Dropbox', auth_login_path, class: 'db-button login' %>
   <%- end -%>
 </div>
 

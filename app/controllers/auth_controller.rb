@@ -1,4 +1,4 @@
-class DropboxController < ApplicationController
+class AuthController < ApplicationController
 
   def login
     if dropbox_session && dropbox_session.authorized?
@@ -31,8 +31,6 @@ class DropboxController < ApplicationController
       setup_session
       save_dropbox_session
       redirect_to dropbox_session.get_authorize_url url_for action: 'callback'
-    rescue Timeout::Error, DropboxAuthError, SocketError
-      redirect_to root_path, alert: "Sorry, we can't connect to Dropbox right now."
     end
 
     def setup_session

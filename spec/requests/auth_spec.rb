@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe 'Login' do
+describe 'Authentication' do
 
-  let(:oauth_callback)     { 'http://www.example.com/dropbox/callback' }
+  let(:oauth_callback)     { 'http://www.example.com/auth/callback' }
   let(:oauth_token)        { 'oauth_token' }
   let(:oauth_token_secret) { 'oauth_token_secret' }
   let(:user_name)          { 'Test User' }
@@ -62,7 +62,7 @@ describe 'Login' do
 
     it 'should render a polite failure' do
       login
-      get_via_redirect "/dropbox/callback?not_approved=true"
+      get_via_redirect "/auth/callback?not_approved=true"
       expect(CGI.unescapeHTML response.body).to include "Sorry, we couldn't connect to your Dropbox account."
     end
   end
@@ -72,7 +72,7 @@ describe 'Login' do
   end
 
   def login
-    get '/dropbox/login'
+    get '/auth/login'
   end
 
   def login_and_expect_error
@@ -83,7 +83,7 @@ describe 'Login' do
 
   def login_and_authorize
     login
-    get_via_redirect "/dropbox/callback?uid=1234&oauth_token=#{oauth_token}"
+    get_via_redirect "/auth/callback?uid=1234&oauth_token=#{oauth_token}"
   end
 
 end
