@@ -1,7 +1,7 @@
 class ThumbnailsController < ApplicationController
 
   def show
-    send_data photo.thumbnail
+    send_data photo.thumbnail, type: photo.mime_type, disposition: 'inline'
   end
 
   private

@@ -21,6 +21,10 @@ class Photo < DropboxRecord
     id
   end
 
+  def mime_type
+    @mime ||= @attributes['mime_type']
+  end
+
   def url
     cache_for_session([:photo_url, id]) { dropbox_client.media(path)['url'] }
   end
